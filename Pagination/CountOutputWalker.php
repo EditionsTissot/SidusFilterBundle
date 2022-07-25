@@ -135,8 +135,8 @@ class CountOutputWalker extends SqlWalker
         $sql = parent::walkSelectStatement($AST);
 
         return str_replace(
-            "AS {$this->platform->getSQLResultCasing('sclr_0')} FROM",
-            "AS {$this->platform->getSQLResultCasing('dctrn_count')} FROM",
+            "AS sclr_0 FROM",
+            "AS dctrn_count FROM",
             $sql
         );
     }

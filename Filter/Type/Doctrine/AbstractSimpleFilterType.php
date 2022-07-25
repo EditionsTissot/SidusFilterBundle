@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Sidus\FilterBundle\Filter\Type\Doctrine;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\QueryBuilder;
 use Sidus\FilterBundle\Exception\BadQueryHandlerException;
 use Sidus\FilterBundle\Filter\FilterInterface;
@@ -109,6 +110,10 @@ abstract class AbstractSimpleFilterType extends AbstractDoctrineFilterType
         }
         $platform = $qb->getEntityManager()->getConnection()->getDatabasePlatform();
 
-        return 'postgresql' === $platform?->getName();
+        if(!$platform instanceof AbstractPlatform) {
+            return false;
+        }
+
+        return 'postgresql' === $platform->getName();
     }
 }
