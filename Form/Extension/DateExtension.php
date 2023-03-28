@@ -29,7 +29,7 @@ class DateExtension extends AbstractTypeExtension
         $builder->addModelTransformer(
             new CallbackTransformer(
                 static function ($value) {
-                    if (null === $value || $value instanceof \DateTimeInterface) {
+                    if (null === $value || $value instanceof \DateTimeInterface || is_array($value)) {
                         return $value;
                     }
 
