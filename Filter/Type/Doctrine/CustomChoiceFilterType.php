@@ -33,8 +33,18 @@ class CustomChoiceFilterType extends AbstractSimpleFilterType
         $uid = uniqid('choices', false);
         $qb->setParameter($uid, $data);
 
-        if (is_iterable($data)) {
+        if (is_iterable($data) && count($data) > 1) {
             return "{$column} IN (:{$uid})";
+        }
+
+        if(is_array($data) && count($data) == 1 && $data[0] === null) {
+
+            $currentParameters = $qb->getParameters()->filter(function ($parameter) use ($uid) {
+                return $parameter->getName() === $uid;
+            })->first();
+
+            $qb->getParameters()->removeElement($currentParameters);
+            return "{$column} IS NULL";
         }
 
         return "{$column} = :{$uid}";
