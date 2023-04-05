@@ -42,9 +42,6 @@ class QueryHandlerRegistry
     /** @var QueryHandlerInterface[] */
     protected $queryHandlers = [];
 
-    /**
-     * @param QueryHandlerConfigurationFactoryInterface $queryHandlerConfigurationFactory
-     */
     public function __construct(
         QueryHandlerConfigurationFactoryInterface $queryHandlerConfigurationFactory
     ) {
@@ -54,9 +51,6 @@ class QueryHandlerRegistry
     /**
      * Used by the dependency injection system to add raw configuration items from YML config
      *
-     * @param string $code
-     * @param array  $configuration
-     *
      * @internal Warning this method does not validate the given configuration
      */
     public function addRawQueryHandlerConfiguration(string $code, array $configuration): void
@@ -64,38 +58,25 @@ class QueryHandlerRegistry
         $this->rawQueryHandlerConfigurations[$code] = $configuration;
     }
 
-    /**
-     * @param QueryHandlerConfigurationInterface $queryHandlerConfiguration
-     */
     public function addQueryHandlerConfiguration(QueryHandlerConfigurationInterface $queryHandlerConfiguration): void
     {
         $this->queryHandlerConfigurations[$queryHandlerConfiguration->getCode()] = $queryHandlerConfiguration;
     }
 
-    /**
-     * @param QueryHandlerInterface $queryHandler
-     */
     public function addQueryHandler(QueryHandlerInterface $queryHandler): void
     {
         $this->queryHandlers[$queryHandler->getConfiguration()->getCode()] = $queryHandler;
     }
 
-    /**
-     * @param QueryHandlerFactoryInterface $queryHandlerFactory
-     */
     public function addQueryHandlerFactory(QueryHandlerFactoryInterface $queryHandlerFactory): void
     {
         $this->queryHandlerFactories[$queryHandlerFactory->getProvider()] = $queryHandlerFactory;
     }
 
     /**
-     * @param string $code
-     *
      * @throws MissingFilterException
      * @throws MissingQueryHandlerException
      * @throws MissingQueryHandlerFactoryException
-     *
-     * @return QueryHandlerInterface
      */
     public function getQueryHandler(string $code): QueryHandlerInterface
     {
@@ -106,11 +87,6 @@ class QueryHandlerRegistry
         return $this->queryHandlers[$code];
     }
 
-    /**
-     * @param string $code
-     *
-     * @return bool
-     */
     public function hasQueryHandler(string $code): bool
     {
         return array_key_exists($code, $this->queryHandlers)
@@ -119,11 +95,7 @@ class QueryHandlerRegistry
     }
 
     /**
-     * @param string $code
-     *
      * @throws MissingQueryHandlerException
-     *
-     * @return QueryHandlerConfigurationInterface
      */
     protected function getQueryHandlerConfiguration(string $code): QueryHandlerConfigurationInterface
     {
@@ -135,13 +107,9 @@ class QueryHandlerRegistry
     }
 
     /**
-     * @param string $code
-     *
      * @throws MissingFilterException
      * @throws MissingQueryHandlerException
      * @throws MissingQueryHandlerFactoryException
-     *
-     * @return QueryHandlerInterface
      */
     protected function buildQueryHandler(string $code): QueryHandlerInterface
     {
@@ -155,11 +123,7 @@ class QueryHandlerRegistry
     }
 
     /**
-     * @param string $code
-     *
      * @throws MissingQueryHandlerException
-     *
-     * @return QueryHandlerConfigurationInterface
      */
     protected function buildQueryHandlerConfiguration(string $code): QueryHandlerConfigurationInterface
     {
@@ -177,11 +141,7 @@ class QueryHandlerRegistry
     }
 
     /**
-     * @param string $provider
-     *
      * @throws MissingQueryHandlerFactoryException
-     *
-     * @return QueryHandlerFactoryInterface
      */
     protected function getQueryHandlerFactory(string $provider): QueryHandlerFactoryInterface
     {

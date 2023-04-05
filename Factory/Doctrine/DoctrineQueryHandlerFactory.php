@@ -18,7 +18,6 @@ use Sidus\FilterBundle\Query\Handler\Configuration\QueryHandlerConfigurationInte
 use Sidus\FilterBundle\Query\Handler\Doctrine\DoctrineQueryHandler;
 use Sidus\FilterBundle\Query\Handler\QueryHandlerInterface;
 use Sidus\FilterBundle\Registry\FilterTypeRegistry;
-use UnexpectedValueException;
 
 /**
  * Dedicated logic for Doctrine query handler
@@ -33,10 +32,6 @@ class DoctrineQueryHandlerFactory implements QueryHandlerFactoryInterface
     /** @var ManagerRegistry */
     protected $doctrine;
 
-    /**
-     * @param FilterTypeRegistry $filterTypeRegistry
-     * @param ManagerRegistry    $doctrine
-     */
     public function __construct(FilterTypeRegistry $filterTypeRegistry, ManagerRegistry $doctrine)
     {
         $this->filterTypeRegistry = $filterTypeRegistry;
@@ -44,11 +39,7 @@ class DoctrineQueryHandlerFactory implements QueryHandlerFactoryInterface
     }
 
     /**
-     * @param QueryHandlerConfigurationInterface $queryHandlerConfiguration
-     *
-     * @throws UnexpectedValueException
-     *
-     * @return QueryHandlerInterface
+     * @throws \UnexpectedValueException
      */
     public function createQueryHandler(
         QueryHandlerConfigurationInterface $queryHandlerConfiguration
@@ -56,9 +47,6 @@ class DoctrineQueryHandlerFactory implements QueryHandlerFactoryInterface
         return new DoctrineQueryHandler($this->filterTypeRegistry, $queryHandlerConfiguration, $this->doctrine);
     }
 
-    /**
-     * @return string
-     */
     public function getProvider(): string
     {
         return 'doctrine';

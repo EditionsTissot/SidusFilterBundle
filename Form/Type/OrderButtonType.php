@@ -26,11 +26,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OrderButtonType extends SubmitType
 {
-    /**
-     * @param FormView      $view
-     * @param FormInterface $form
-     * @param array         $options
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
@@ -39,14 +34,13 @@ class OrderButtonType extends SubmitType
         /** @var SortConfig $sortConfig */
         $sortConfig = $options['sort_config'];
         $view->vars['sort_config'] = $sortConfig;
+
         if ($sortConfig->getColumn() === $form->getName()) { // maybe use a specific option instead of name ?
             $view->vars['arrow'] = $sortConfig->getDirection() ? '&uarr;' : '&darr;';
         }
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

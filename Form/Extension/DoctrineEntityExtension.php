@@ -32,6 +32,7 @@ class DoctrineEntityExtension extends AbstractTypeExtension
             new CallbackTransformer(
                 static function ($value) use ($options) {
                     $entityManager = $options['em'];
+
                     if (!$entityManager instanceof EntityManagerInterface) {
                         throw new \UnexpectedValueException('Missing EntityManager in options');
                     }
@@ -48,6 +49,7 @@ class DoctrineEntityExtension extends AbstractTypeExtension
                         if (is_array($value)) {
                             return array_map($callback, $value);
                         }
+
                         if ($value instanceof Collection) {
                             return $value->map($callback);
                         }

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Sidus\FilterBundle\Exception;
 
-use LogicException;
 use Sidus\FilterBundle\Query\Handler\QueryHandlerInterface;
 
 /**
@@ -20,12 +19,8 @@ use Sidus\FilterBundle\Query\Handler\QueryHandlerInterface;
  *
  * @author Vincent Chalnot <vincent@sidus.fr>
  */
-class BadQueryHandlerException extends LogicException
+class BadQueryHandlerException extends \LogicException
 {
-    /**
-     * @param QueryHandlerInterface $queryHandler
-     * @param string                $class
-     */
     public function __construct(QueryHandlerInterface $queryHandler, string $class)
     {
         parent::__construct("Query handler {$queryHandler->getConfiguration()->getCode()} must implements {$class}");

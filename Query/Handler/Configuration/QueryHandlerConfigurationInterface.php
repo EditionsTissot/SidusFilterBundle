@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Sidus\FilterBundle\Query\Handler\Configuration;
 
 use Sidus\FilterBundle\Filter\FilterInterface;
-use UnexpectedValueException;
 
 /**
  * Holds the configuration of a query handler
@@ -22,21 +21,14 @@ use UnexpectedValueException;
  */
 interface QueryHandlerConfigurationInterface
 {
-    /**
-     * @return string
-     */
     public function getCode(): string;
 
-    /**
-     * @return string
-     */
     public function getProvider(): string;
 
     /**
-     * @param FilterInterface $filter
-     * @param int             $index
+     * @param int $index
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function addFilter(FilterInterface $filter, int $index = null);
 
@@ -46,22 +38,12 @@ interface QueryHandlerConfigurationInterface
     public function getFilters(): array;
 
     /**
-     * @param string $code
-     *
-     * @throws UnexpectedValueException
-     *
-     * @return FilterInterface
+     * @throws \UnexpectedValueException
      */
     public function getFilter(string $code): FilterInterface;
 
-    /**
-     * @return array
-     */
     public function getSortable(): array;
 
-    /**
-     * @param string $sortable
-     */
     public function addSortable(string $sortable);
 
     /**
@@ -69,21 +51,12 @@ interface QueryHandlerConfigurationInterface
      */
     public function getDefaultSort(): array;
 
-    /**
-     * @return int
-     */
     public function getResultsPerPage(): int;
 
-    /**
-     * @return array
-     */
     public function getOptions(): array;
 
     /**
-     * @param string $code
-     * @param null   $fallback
-     *
-     * @return mixed
+     * @param null $fallback
      */
     public function getOption(string $code, $fallback = null);
 }

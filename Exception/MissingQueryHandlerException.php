@@ -12,18 +12,13 @@ declare(strict_types=1);
 
 namespace Sidus\FilterBundle\Exception;
 
-use UnexpectedValueException;
-
 /**
  * Thrown when trying to access a missing filter
  *
  * @author Vincent Chalnot <vincent@sidus.fr>
  */
-class MissingQueryHandlerException extends UnexpectedValueException
+class MissingQueryHandlerException extends \UnexpectedValueException
 {
-    /**
-     * @param string $code
-     */
     public function __construct(string $code)
     {
         parent::__construct("No query handler with code: {$code}");

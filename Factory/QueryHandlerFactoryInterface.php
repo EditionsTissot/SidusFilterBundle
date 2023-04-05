@@ -22,17 +22,9 @@ use Sidus\FilterBundle\Query\Handler\QueryHandlerInterface;
  */
 interface QueryHandlerFactoryInterface
 {
-    /**
-     * @param QueryHandlerConfigurationInterface $queryHandlerConfiguration
-     *
-     * @return QueryHandlerInterface
-     */
     public function createQueryHandler(
         QueryHandlerConfigurationInterface $queryHandlerConfiguration
     ): QueryHandlerInterface;
 
-    /**
-     * @return string
-     */
     public function getProvider(): string;
 }

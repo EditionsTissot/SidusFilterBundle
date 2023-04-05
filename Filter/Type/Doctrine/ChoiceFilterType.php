@@ -64,7 +64,8 @@ class ChoiceFilterType extends CustomChoiceFilterType
 
             $qb = clone $queryHandler->getQueryBuilder();
             $qb->select("{$column} AS __value")
-                ->groupBy($column);
+                ->groupBy($column)
+            ;
 
             foreach ($qb->getQuery()->getArrayResult() as $result) {
                 $value = $result['__value'];

@@ -19,8 +19,5 @@ namespace Sidus\FilterBundle\Pagination;
  */
 interface ManualCountAdapterInterface
 {
-    /**
-     * @param int $nbResult
-     */
     public function setNbResults(int $nbResult);
 }

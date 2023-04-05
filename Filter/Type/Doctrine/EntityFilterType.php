@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Sidus\FilterBundle\Filter\Type\Doctrine;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\QueryBuilder;
 use Sidus\FilterBundle\Exception\BadQueryHandlerException;
 use Sidus\FilterBundle\Filter\FilterInterface;
@@ -36,7 +35,7 @@ class EntityFilterType extends ChoiceFilterType
             throw new BadQueryHandlerException($queryHandler, DoctrineQueryHandlerInterface::class);
         }
 
-        if (\count($filter->getAttributes()) !== 1) {
+        if (1 !== \count($filter->getAttributes())) {
             throw new \LogicException("Multiple attributes for 'entity' filter type are not supported");
         }
         $attributes = $filter->getAttributes();
@@ -56,7 +55,8 @@ class EntityFilterType extends ChoiceFilterType
                     $targetQb = $repository->createQueryBuilder('t');
                     $targetQb
                         ->where("t.{$classMetadata->getSingleIdentifierFieldName()} IN ({$qb->getDQL()})")
-                        ->setParameters($qb->getParameters());
+                        ->setParameters($qb->getParameters())
+                    ;
 
                     return $targetQb;
                 },
@@ -78,6 +78,7 @@ class EntityFilterType extends ChoiceFilterType
         $column = $queryHandler->resolveAttributeAlias($attributePath);
 
         $qb = clone $queryHandler->getQueryBuilder();
+
         if ($metadata['id'] ?? false) { // This is a good way to know if we are in a *toMany relation
             // Specific case for *ToMany relations as the id is not available through a local column
             $qb->select($column);

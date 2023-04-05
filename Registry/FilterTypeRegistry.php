@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Sidus\FilterBundle\Registry;
 
 use Sidus\FilterBundle\Filter\Type\FilterTypeInterface;
-use UnexpectedValueException;
 
 /**
  * Registry for filter types
@@ -25,37 +24,27 @@ class FilterTypeRegistry
     /** @var FilterTypeInterface[][] */
     protected $filterTypes = [];
 
-    /**
-     * @param FilterTypeInterface $filterType
-     */
     public function addFilterType(FilterTypeInterface $filterType): void
     {
         $this->filterTypes[$filterType->getProvider()][$filterType->getName()] = $filterType;
     }
 
     /**
-     * @param string $provider
-     *
-     * @throws UnexpectedValueException
-     *
      * @return FilterTypeInterface[]
+     *
+     * @throws \UnexpectedValueException
      */
     public function getFilterTypes(string $provider): array
     {
         if (!array_key_exists($provider, $this->filterTypes)) {
-            throw new UnexpectedValueException("No filter types for provider with code : {$provider}");
+            throw new \UnexpectedValueException("No filter types for provider with code : {$provider}");
         }
 
         return $this->filterTypes[$provider];
     }
 
     /**
-     * @param string $provider
-     * @param string $code
-     *
-     * @throws UnexpectedValueException
-     *
-     * @return FilterTypeInterface
+     * @throws \UnexpectedValueException
      */
     public function getFilterType(string $provider, string $code): FilterTypeInterface
     {
@@ -63,18 +52,12 @@ class FilterTypeRegistry
             $flattenedTypes = implode("', '", array_keys($this->filterTypes[$provider]));
             $m = "No type for provider {$provider} with code : {$code}, ";
             $m .= "available types are '{$flattenedTypes}'.";
-            throw new UnexpectedValueException($m);
+            throw new \UnexpectedValueException($m);
         }
 
         return $this->filterTypes[$provider][$code];
     }
 
-    /**
-     * @param string $provider
-     * @param string $code
-     *
-     * @return bool
-     */
     public function hasFilterType(string $provider, string $code): bool
     {
         return !empty($this->filterTypes[$provider][$code]);

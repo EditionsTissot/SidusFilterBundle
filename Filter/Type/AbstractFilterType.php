@@ -31,11 +31,6 @@ abstract class AbstractFilterType implements FilterTypeInterface
     /** @var array */
     protected $formOptions;
 
-    /**
-     * @param string $name
-     * @param string $formType
-     * @param array  $formOptions
-     */
     public function __construct(string $name, string $formType, array $formOptions = [])
     {
         $this->name = $name;
@@ -43,9 +38,6 @@ abstract class AbstractFilterType implements FilterTypeInterface
         $this->formOptions = $formOptions;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;

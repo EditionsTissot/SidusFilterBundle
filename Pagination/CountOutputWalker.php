@@ -25,7 +25,6 @@ use Doctrine\ORM\Query\AST\SelectStatement;
 use Doctrine\ORM\Query\ParserResult;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Query\SqlWalker;
-use RuntimeException;
 
 /**
  * Custom CountOutputWalker copied from Doctrine with huge performance improvements and fix for Oracle
@@ -34,9 +33,7 @@ use RuntimeException;
  */
 class CountOutputWalker extends SqlWalker
 {
-    /**
-     * @var AbstractPlatform
-     */
+    /** @var AbstractPlatform */
     private $platform;
 
     /**
@@ -44,9 +41,8 @@ class CountOutputWalker extends SqlWalker
      * because Doctrine\ORM\Query\SqlWalker keeps everything private without
      * accessors.
      *
-     * @param Query              $query
+     * @param Query        $query
      * @param ParserResult $parserResult
-     * @param array                            $queryComponents
      *
      * @throws DBALException
      */
@@ -64,14 +60,12 @@ class CountOutputWalker extends SqlWalker
      * are able to cache subqueries. By keeping the ORDER BY clause intact, the limitSubQuery
      * that will most likely be executed next can be read from the native SQL cache.
      *
-     * @param SelectStatement $AST
+     * @return string
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @throws MappingException
      * @throws OptimisticLockException
      * @throws QueryException
-     *
-     * @return string
      */
     public function walkSelectStatement(SelectStatement $AST)
     {
@@ -89,18 +83,14 @@ class CountOutputWalker extends SqlWalker
         $this->getQuery()->setHint(self::HINT_DISTINCT, true);
 
         if ($AST->havingClause) {
-            throw new RuntimeException(
-                'Cannot count query that uses a HAVING clause. Use the output walkers for pagination'
-            );
+            throw new \RuntimeException('Cannot count query that uses a HAVING clause. Use the output walkers for pagination');
         }
 
         // Get the root entity and alias from the AST fromClause
         $from = $AST->fromClause->identificationVariableDeclarations;
 
         if (count($from) > 1) {
-            throw new RuntimeException(
-                'Cannot count query which selects two FROM components, cannot make distinction'
-            );
+            throw new \RuntimeException('Cannot count query which selects two FROM components, cannot make distinction');
         }
 
         $fromRoot = reset($from);
@@ -110,6 +100,7 @@ class CountOutputWalker extends SqlWalker
         $identifierFieldName = $rootClass->getSingleIdentifierFieldName();
 
         $pathType = PathExpression::TYPE_STATE_FIELD;
+
         if (isset($rootClass->associationMappings[$identifierFieldName])) {
             $pathType = PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION;
         }
@@ -135,8 +126,8 @@ class CountOutputWalker extends SqlWalker
         $sql = parent::walkSelectStatement($AST);
 
         return str_replace(
-            "AS sclr_0 FROM",
-            "AS dctrn_count FROM",
+            'AS sclr_0 FROM',
+            'AS dctrn_count FROM',
             $sql
         );
     }

@@ -15,7 +15,6 @@ namespace Sidus\FilterBundle\Factory;
 use Sidus\FilterBundle\Filter\Filter;
 use Sidus\FilterBundle\Filter\FilterInterface;
 use Sidus\FilterBundle\Query\Handler\Configuration\QueryHandlerConfigurationInterface;
-use UnexpectedValueException;
 
 /**
  * Factory for doctrine filters
@@ -25,13 +24,7 @@ use UnexpectedValueException;
 class FilterFactory implements FilterFactoryInterface
 {
     /**
-     * @param QueryHandlerConfigurationInterface $queryHandlerConfiguration
-     * @param string                             $code
-     * @param array                              $configuration
-     *
-     * @throws UnexpectedValueException
-     *
-     * @return FilterInterface
+     * @throws \UnexpectedValueException
      */
     public function createFilter(
         QueryHandlerConfigurationInterface $queryHandlerConfiguration,

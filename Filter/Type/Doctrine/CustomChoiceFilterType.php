@@ -13,10 +13,6 @@ declare(strict_types=1);
 namespace Sidus\FilterBundle\Filter\Type\Doctrine;
 
 use Doctrine\ORM\QueryBuilder;
-use Sidus\FilterBundle\Exception\BadQueryHandlerException;
-use Sidus\FilterBundle\Filter\FilterInterface;
-use Sidus\FilterBundle\Query\Handler\Doctrine\DoctrineQueryHandlerInterface;
-use Sidus\FilterBundle\Query\Handler\QueryHandlerInterface;
 
 /**
  * Use in combination with a custom form type to provide choices
@@ -37,8 +33,7 @@ class CustomChoiceFilterType extends AbstractSimpleFilterType
             return "{$column} IN (:{$uid})";
         }
 
-        if(is_array($data) && count($data) == 1 && $data[0] === null) {
-
+        if (is_array($data) && 1 == count($data) && null === $data[0]) {
             $currentParameters = $qb->getParameters()->filter(function ($parameter) use ($uid) {
                 return $parameter->getName() === $uid;
             })->first();

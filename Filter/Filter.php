@@ -45,19 +45,12 @@ class Filter implements FilterInterface
     /** @var array */
     protected $formOptions = [];
 
-    /** @var mixed */
     protected $default;
 
     /**
-     * @param QueryHandlerConfigurationInterface $queryHandlerConfiguration
-     * @param string                             $code
-     * @param string                             $filterType
-     * @param array                              $attributes
-     * @param string                             $formType
-     * @param string                             $label
-     * @param array                              $options
-     * @param array                              $formOptions
-     * @param null                               $default
+     * @param string $formType
+     * @param string $label
+     * @param null   $default
      */
     public function __construct(
         QueryHandlerConfigurationInterface $queryHandlerConfiguration,
@@ -85,33 +78,21 @@ class Filter implements FilterInterface
         }
     }
 
-    /**
-     * @return QueryHandlerConfigurationInterface
-     */
     public function getQueryHandlerConfiguration(): QueryHandlerConfigurationInterface
     {
         return $this->queryHandlerConfiguration;
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return $this->code;
     }
 
-    /**
-     * @return string
-     */
     public function getFilterType(): string
     {
         return $this->filterType;
     }
 
-    /**
-     * @return array
-     */
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -125,9 +106,6 @@ class Filter implements FilterInterface
         return $this->label;
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
@@ -141,20 +119,11 @@ class Filter implements FilterInterface
         return $this->formType;
     }
 
-    /**
-     * @return array
-     */
     public function getFormOptions(): array
     {
         return $this->formOptions;
     }
 
-    /**
-     * @param string $key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
     public function getOption(string $key, $default = null)
     {
         if (!array_key_exists($key, $this->options)) {
@@ -164,17 +133,11 @@ class Filter implements FilterInterface
         return $this->options[$key];
     }
 
-    /**
-     * @return mixed
-     */
     public function getDefault()
     {
         return $this->default;
     }
 
-    /**
-     * @param mixed $default
-     */
     public function setDefault($default): void
     {
         $this->default = $default;
