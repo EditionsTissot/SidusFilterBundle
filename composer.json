@@ -43,5 +43,12 @@
     },
     "suggest": {
         "doctrine/doctrine-bundle": "Without Doctrine ORM, this bundle won't do anything out of the box"
+    },
+    "require-dev": {
+        "editions-tissot/php-cs-fixer-config": "^2.0"
+    },
+    "scripts": {
+        "code-style-check": "./vendor/bin/php-cs-fixer fix --dry-run --verbose",
+        "code-style-fix": "./vendor/bin/php-cs-fixer fix --using-cache=no",
     }
 }
