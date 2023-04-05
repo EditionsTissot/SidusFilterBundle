@@ -31,7 +31,7 @@ class SidusFilterExtension extends SidusBaseExtension
         // Only load doctrine configuration if bundle is enabled
         if (array_key_exists('DoctrineBundle', $container->getParameter('kernel.bundles'))) {
             $doctrineLoader = new ServiceLoader($container);
-            $doctrineLoader->loadFiles(__DIR__.'/../Resources/config/doctrine');
+            $doctrineLoader->loadFiles(__DIR__ . '/../Resources/config/doctrine');
         }
 
         $configuration = new Configuration();
@@ -40,6 +40,7 @@ class SidusFilterExtension extends SidusBaseExtension
         $registry = $container->getDefinition(QueryHandlerRegistry::class);
         /** @var array $configurations */
         $configurations = $config['configurations'];
+
         foreach ($configurations as $code => $configuration) {
             $registry->addMethodCall('addRawQueryHandlerConfiguration', [$code, $configuration]);
         }

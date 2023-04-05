@@ -24,7 +24,6 @@ use Sidus\FilterBundle\Pagination\DoctrineORMAdapter;
 use Sidus\FilterBundle\Query\Handler\AbstractQueryHandler;
 use Sidus\FilterBundle\Query\Handler\Configuration\QueryHandlerConfigurationInterface;
 use Sidus\FilterBundle\Registry\FilterTypeRegistry;
-use UnexpectedValueException;
 
 /**
  * Build the necessary logic around filters based on a configuration
@@ -49,11 +48,7 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
     protected $queryBuilder;
 
     /**
-     * @param FilterTypeRegistry                 $filterTypeRegistry
-     * @param QueryHandlerConfigurationInterface $configuration
-     * @param ManagerRegistry                    $doctrine
-     *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function __construct(
         FilterTypeRegistry $filterTypeRegistry,
@@ -62,37 +57,28 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
     ) {
         parent::__construct($filterTypeRegistry, $configuration);
         $this->entityReference = $configuration->getOption('entity');
+
         if (null === $this->entityReference) {
-            throw new UnexpectedValueException(
-                "Missing 'entity' option for filter configuration {$configuration->getCode()}"
-            );
+            throw new \UnexpectedValueException("Missing 'entity' option for filter configuration {$configuration->getCode()}");
         }
         $this->entityManager = $doctrine->getManagerForClass($this->entityReference);
+
         if (!$this->entityManager) {
-            throw new UnexpectedValueException("No manager found for class {$this->entityReference}");
+            throw new \UnexpectedValueException("No manager found for class {$this->entityReference}");
         }
         $this->repository = $this->entityManager->getRepository($this->entityReference);
     }
 
-    /**
-     * @return string
-     */
     public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
     public function getEntityReference(): string
     {
         return $this->entityReference;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getQueryBuilder(): QueryBuilder
     {
         if (!$this->queryBuilder) {
@@ -103,8 +89,7 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param string       $alias
+     * @param string $alias
      */
     public function setQueryBuilder(QueryBuilder $queryBuilder, $alias)
     {
@@ -112,11 +97,6 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
         $this->queryBuilder = $queryBuilder;
     }
 
-    /**
-     * @param string $attributePath
-     *
-     * @return string
-     */
     public function resolveAttributeAlias(string $attributePath): string
     {
         $metadata = $this->getAttributeMetadata($attributePath, Join::LEFT_JOIN);
@@ -137,11 +117,13 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
         $previousAttributeIsScalar = false;
         $attributeMetadata = null;
         $previousAlias = $this->getAlias();
+
         foreach ($attributesList as $nestedAttribute) {
             if ($previousAttributeIsScalar) {
                 $m = "Can't resolve path {$attributePath}, trying to resolve a relation on a scalar attribute.";
-                throw new UnexpectedValueException($m);
+                throw new \UnexpectedValueException($m);
             }
+
             if ($entityMetadata->hasAssociation($nestedAttribute)) {
                 $previousAttributeMetadata = $attributeMetadata;
                 $attributeMetadata = $entityMetadata->getAssociationMapping($nestedAttribute);
@@ -153,13 +135,14 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
                 if ($joinType) {
                     $attributeMetadata['alias'] = "{$previousAlias}.{$nestedAttribute}";
                     $qb = $this->getQueryBuilder();
-                    $joinAlias = uniqid('nested'.ucfirst($nestedAttribute), false);
+                    $joinAlias = uniqid('nested' . ucfirst($nestedAttribute), false);
+
                     if (Join::INNER_JOIN === $joinType) {
                         $qb->innerJoin($attributeMetadata['alias'], $joinAlias);
                     } elseif (Join::LEFT_JOIN === $joinType) {
                         $qb->leftJoin($attributeMetadata['alias'], $joinAlias);
                     } else {
-                        throw new UnexpectedValueException("Unknown join type {$joinType}");
+                        throw new \UnexpectedValueException("Unknown join type {$joinType}");
                     }
                     $previousAlias = $joinAlias;
                 }
@@ -175,7 +158,7 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
             } else {
                 $m = "Unknown attribute {$nestedAttribute} in class {$entityMetadata->getName()}.";
                 $m .= " Path: {$attributePath}";
-                throw new UnexpectedValueException($m);
+                throw new \UnexpectedValueException($m);
             }
         }
 
@@ -186,6 +169,7 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
         // *ToMany relations do not behave like other associations, we must join on the relation once more to point to
         // the id because we can't use IDENTITY() on them
         $toManyTypes = [ClassMetadataInfo::ONE_TO_MANY, ClassMetadataInfo::MANY_TO_MANY];
+
         if (in_array($attributeMetadata['type'], $toManyTypes, true)) {
             $entityMetadata = $this->entityManager->getClassMetadata($attributeMetadata['targetEntity']);
             $previousAttributeMetadata = $attributeMetadata;
@@ -193,6 +177,7 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
             $attributeMetadata['parent'] = $previousAttributeMetadata; // Keep the metadata hierarchy
             // Also pass targetEntity to mimic a relationship behavior
             $attributeMetadata['targetEntity'] = $entityMetadata->getName();
+
             if ($joinType) {
                 // Alias was already applied, this is what makes *ToMany weird
                 $attributeMetadata['alias'] = "{$previousAlias}.{$attributeMetadata['fieldName']}";
@@ -202,22 +187,16 @@ class DoctrineQueryHandler extends AbstractQueryHandler implements DoctrineQuery
         return $attributeMetadata;
     }
 
-
-    /**
-     * @param SortConfig $sortConfig
-     */
     protected function applySort(SortConfig $sortConfig)
     {
         $column = $sortConfig->getColumn();
+
         if ($column) {
             $direction = $sortConfig->getDirection() ? 'DESC' : 'ASC'; // null or false both default to ASC
             $this->getQueryBuilder()->addOrderBy($this->resolveAttributeAlias($column), $direction);
         }
     }
 
-    /**
-     * @return Pagerfanta
-     */
     protected function createPager(): Pagerfanta
     {
         return new Pagerfanta(new DoctrineORMAdapter($this->getQueryBuilder()));

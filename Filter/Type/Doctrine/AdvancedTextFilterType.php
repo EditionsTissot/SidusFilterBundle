@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Sidus\FilterBundle\Filter\Type\Doctrine;
 
 use Doctrine\ORM\QueryBuilder;
-use UnexpectedValueException;
 
 /**
  * Replaces the standard TextFilterType with more advance capabilities
@@ -26,44 +25,39 @@ class AdvancedTextFilterType extends AbstractSimpleFilterType
 
     /**
      * Must return the DQL statement and set the proper parameters in the QueryBuilder
-     *
-     * @param QueryBuilder $qb
-     * @param string       $column
-     * @param mixed        $data
-     *
-     * @return string
      */
     protected function applyDQL(QueryBuilder $qb, string $column, $data): string
     {
         $input = $data['input'];
         $uid = uniqid('text', false); // Generate random parameter names to prevent collisions
+
         switch ($data['option']) {
             case 'exact':
                 $qb->setParameter($uid, $input);
 
                 return $this->applyStringOperator($qb, $column, $uid, '=');
             case 'like_':
-                $qb->setParameter($uid, trim($input, '%').'%');
+                $qb->setParameter($uid, trim($input, '%') . '%');
 
                 return $this->applyStringOperator($qb, $column, $uid, 'LIKE');
             case '_like':
-                $qb->setParameter($uid, '%'.trim($input, '%'));
+                $qb->setParameter($uid, '%' . trim($input, '%'));
 
                 return $this->applyStringOperator($qb, $column, $uid, 'LIKE');
             case '_like_':
-                $qb->setParameter($uid, '%'.trim($input, '%').'%');
+                $qb->setParameter($uid, '%' . trim($input, '%') . '%');
 
                 return $this->applyStringOperator($qb, $column, $uid, 'LIKE');
             case 'notlike_':
-                $qb->setParameter($uid, trim($input, '%').'%');
+                $qb->setParameter($uid, trim($input, '%') . '%');
 
                 return $this->applyStringOperator($qb, $column, $uid, 'NOT LIKE');
             case '_notlike':
-                $qb->setParameter($uid, '%'.trim($input, '%'));
+                $qb->setParameter($uid, '%' . trim($input, '%'));
 
                 return $this->applyStringOperator($qb, $column, $uid, 'NOT LIKE');
             case '_notlike_':
-                $qb->setParameter($uid, '%'.trim($input, '%').'%');
+                $qb->setParameter($uid, '%' . trim($input, '%') . '%');
 
                 return $this->applyStringOperator($qb, $column, $uid, 'NOT LIKE');
             case 'empty':
@@ -75,14 +69,9 @@ class AdvancedTextFilterType extends AbstractSimpleFilterType
             case 'notnull':
                 return "{$column} IS NOT NULL";
         }
-        throw new UnexpectedValueException("Unknown option '{$data['option']}'");
+        throw new \UnexpectedValueException("Unknown option '{$data['option']}'");
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     protected function isEmpty($data): bool
     {
         if (null === $data) {

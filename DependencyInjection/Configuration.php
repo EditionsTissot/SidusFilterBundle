@@ -19,8 +19,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 /**
  * This is the class that validates and merges configuration from your app/config files
  *
- * To learn more see {@link
- * http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
+ * To learn more see {@link * http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
  *
  * @author Vincent Chalnot <vincent@sidus.fr>
  */
@@ -43,16 +42,18 @@ class Configuration implements ConfigurationInterface
 
         $filterDefinition = $rootNode
             ->children()
-                ->arrayNode('configurations')
-                    ->prototype('array')
-                        ->children();
+            ->arrayNode('configurations')
+            ->prototype('array')
+            ->children()
+        ;
 
         $this->appendFilterDefinition($filterDefinition);
 
         $filterDefinition->end()
-                    ->end()
-                ->end()
-            ->end();
+            ->end()
+            ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
@@ -63,31 +64,33 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('provider')->isRequired()->cannotBeEmpty()->end()
             ->integerNode('results_per_page')->defaultValue(15)->end()
             ->arrayNode('sortable')
-                ->prototype('scalar')->end()
+            ->prototype('scalar')->end()
             ->end()
             ->arrayNode('default_sort')
-                ->prototype('scalar')->defaultValue([])->end()
+            ->prototype('scalar')->defaultValue([])->end()
             ->end()
             ->variableNode('options')
-                ->defaultValue([])
-                ->validate()
-                    ->ifTrue(
-                        static function ($value) {
-                            return !is_array($value) && null !== $value;
-                        }
-                    )
-                    ->thenInvalid('"options" configuration must be an array or left empty')
-                ->end()
+            ->defaultValue([])
+            ->validate()
+            ->ifTrue(
+                static function ($value) {
+                    return !is_array($value) && null !== $value;
+                }
+            )
+            ->thenInvalid('"options" configuration must be an array or left empty')
+            ->end()
             ->end()
             ->arrayNode('filters')
-                ->prototype('array')
-                    ->children();
+            ->prototype('array')
+            ->children()
+        ;
 
         $this->appendFieldDefinition($fieldDefinition);
 
         $fieldDefinition->end()
-                ->end()
-            ->end();
+            ->end()
+            ->end()
+        ;
     }
 
     protected function appendFieldDefinition(NodeBuilder $fieldDefinition): void
@@ -97,30 +100,31 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('label')->defaultNull()->end()
             ->scalarNode('form_type')->defaultNull()->end()
             ->arrayNode('attributes')
-                ->prototype('scalar')->defaultNull()->end()
+            ->prototype('scalar')->defaultNull()->end()
             ->end()
             ->variableNode('default')->defaultNull()->end()
             ->variableNode('options')
-                ->defaultValue([])
-                ->validate()
-                ->ifTrue(
-                    static function ($value) {
-                        return !is_array($value) && null !== $value;
-                    }
-                )
-                ->thenInvalid('"options" configuration must be an array or left empty')
-                ->end()
+            ->defaultValue([])
+            ->validate()
+            ->ifTrue(
+                static function ($value) {
+                    return !is_array($value) && null !== $value;
+                }
+            )
+            ->thenInvalid('"options" configuration must be an array or left empty')
+            ->end()
             ->end()
             ->variableNode('form_options')
-                ->defaultValue([])
-                ->validate()
-                ->ifTrue(
-                    static function ($value) {
-                        return !is_array($value) && null !== $value;
-                    }
-                )
-                ->thenInvalid('"form_options" configuration must be an array or left empty')
-                ->end()
-            ->end();
+            ->defaultValue([])
+            ->validate()
+            ->ifTrue(
+                static function ($value) {
+                    return !is_array($value) && null !== $value;
+                }
+            )
+            ->thenInvalid('"form_options" configuration must be an array or left empty')
+            ->end()
+            ->end()
+        ;
     }
 }

@@ -15,7 +15,6 @@ namespace Sidus\FilterBundle\Query\Handler\Configuration;
 use Sidus\FilterBundle\Filter\FilterInterface;
 use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use UnexpectedValueException;
 
 /**
  * Holds the configuration of a query handler
@@ -46,9 +45,6 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
     protected $options;
 
     /**
-     * @param string $code
-     * @param array  $configuration
-     *
      * @throws ExceptionInterface
      */
     public function __construct(
@@ -58,24 +54,21 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
         $this->code = $code;
 
         $accessor = PropertyAccess::createPropertyAccessor();
+
         foreach ($configuration as $key => $option) {
             $accessor->setValue($this, $key, $option);
         }
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return $this->code;
     }
 
     /**
-     * @param FilterInterface $filter
-     * @param int             $index
+     * @param int $index
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function addFilter(FilterInterface $filter, int $index = null): void
     {
@@ -83,12 +76,15 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
             $this->filters[$filter->getCode()] = $filter;
         } else {
             $count = count($this->filters);
+
             if (!is_int($index) && !is_numeric($index)) {
-                throw new UnexpectedValueException("Given index should be an integer '{$index}' given");
+                throw new \UnexpectedValueException("Given index should be an integer '{$index}' given");
             }
+
             if (abs($index) > $count) {
                 $index = 0;
             }
+
             if ($index < 0) {
                 $index += $count;
             }
@@ -107,32 +103,22 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
     }
 
     /**
-     * @param string $code
-     *
-     * @throws UnexpectedValueException
-     *
-     * @return FilterInterface
+     * @throws \UnexpectedValueException
      */
     public function getFilter(string $code): FilterInterface
     {
         if (empty($this->filters[$code])) {
-            throw new UnexpectedValueException("No filter with code : {$code} for query handler {$this->code}");
+            throw new \UnexpectedValueException("No filter with code : {$code} for query handler {$this->code}");
         }
 
         return $this->filters[$code];
     }
 
-    /**
-     * @return array
-     */
     public function getSortable(): array
     {
         return $this->sortable;
     }
 
-    /**
-     * @param string $sortable
-     */
     public function addSortable(string $sortable): void
     {
         $this->sortable[] = $sortable;
@@ -146,36 +132,21 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
         return $this->defaultSort;
     }
 
-    /**
-     * @return int
-     */
     public function getResultsPerPage(): int
     {
         return $this->resultsPerPage;
     }
 
-    /**
-     * @return string
-     */
     public function getProvider(): string
     {
         return $this->provider;
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param string $code
-     * @param mixed  $fallback
-     *
-     * @return mixed
-     */
     public function getOption(string $code, $fallback = null)
     {
         if (!array_key_exists($code, $this->options)) {
@@ -185,17 +156,11 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
         return $this->options[$code];
     }
 
-    /**
-     * @param string $provider
-     */
     public function setProvider(string $provider): void
     {
         $this->provider = $provider;
     }
 
-    /**
-     * @param array $sortable
-     */
     public function setSortable(array $sortable): void
     {
         $this->sortable = $sortable;
@@ -217,26 +182,16 @@ class QueryHandlerConfiguration implements QueryHandlerConfigurationInterface
         $this->defaultSort = $defaultSort;
     }
 
-    /**
-     * @param int $resultsPerPage
-     */
     public function setResultsPerPage(int $resultsPerPage): void
     {
         $this->resultsPerPage = $resultsPerPage;
     }
 
-    /**
-     * @param array $options
-     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
-    /**
-     * @param string $code
-     * @param mixed  $value
-     */
     public function addOption(string $code, $value): void
     {
         $this->options[$code] = $value;

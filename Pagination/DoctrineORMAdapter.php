@@ -28,12 +28,12 @@ class DoctrineORMAdapter implements AdapterInterface, ManualCountAdapterInterfac
     protected int $nbResults;
 
     /**
-     * @param Query|QueryBuilder $query                                           A Doctrine ORM query or query
-     *                                                                            builder.
-     * @param Boolean            $fetchJoinCollection                             Whether the query joins a collection
-     *                                                                            (true by default).
-     * @param Boolean|null       $useOutputWalkers                                Whether to use output walkers
-     *                                                                            pagination mode
+     * @param Query|QueryBuilder $query               a Doctrine ORM query or query
+     *                                                builder
+     * @param bool               $fetchJoinCollection whether the query joins a collection
+     *                                                (true by default)
+     * @param bool|null          $useOutputWalkers    Whether to use output walkers
+     *                                                pagination mode
      */
     public function __construct($query, bool $fetchJoinCollection = true, bool $useOutputWalkers = null)
     {
@@ -54,7 +54,7 @@ class DoctrineORMAdapter implements AdapterInterface, ManualCountAdapterInterfac
     /**
      * Returns whether the query joins a collection.
      *
-     * @return Boolean Whether the query joins a collection.
+     * @return bool whether the query joins a collection
      */
     public function getFetchJoinCollection(): bool
     {
@@ -76,7 +76,8 @@ class DoctrineORMAdapter implements AdapterInterface, ManualCountAdapterInterfac
         $this->paginator
             ->getQuery()
             ->setFirstResult($offset)
-            ->setMaxResults($length);
+            ->setMaxResults($length)
+        ;
 
         return $this->paginator->getIterator();
     }

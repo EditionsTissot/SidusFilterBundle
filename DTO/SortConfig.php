@@ -36,7 +36,6 @@ class SortConfig
 
     /**
      * @param string $defaultColumn
-     * @param bool   $defaultDirection
      */
     public function __construct(string $defaultColumn = null, bool $defaultDirection = false)
     {
@@ -56,17 +55,11 @@ class SortConfig
         return $this->column;
     }
 
-    /**
-     * @param string|null $column
-     */
     public function setColumn(string $column = null): void
     {
         $this->column = $column;
     }
 
-    /**
-     * @return boolean
-     */
     public function getDirection(): bool
     {
         if (null === $this->direction) {
@@ -77,7 +70,7 @@ class SortConfig
     }
 
     /**
-     * @param boolean $direction
+     * @param bool $direction
      */
     public function setDirection(bool $direction = null): void
     {
@@ -94,9 +87,6 @@ class SortConfig
         $this->direction = !$this->direction;
     }
 
-    /**
-     * @return int
-     */
     public function getPage(): int
     {
         return $this->page;

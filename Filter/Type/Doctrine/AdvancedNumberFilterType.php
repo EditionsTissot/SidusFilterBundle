@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Sidus\FilterBundle\Filter\Type\Doctrine;
 
 use Doctrine\ORM\QueryBuilder;
-use UnexpectedValueException;
 
 /**
  * Dedicated filter for numbers
@@ -26,17 +25,12 @@ class AdvancedNumberFilterType extends AbstractSimpleFilterType
 
     /**
      * Must return the DQL statement and set the proper parameters in the QueryBuilder
-     *
-     * @param QueryBuilder $qb
-     * @param string       $column
-     * @param mixed        $data
-     *
-     * @return string
      */
     protected function applyDQL(QueryBuilder $qb, string $column, $data): string
     {
         $input = $data['input'];
         $uid = uniqid('number', false); // Generate random parameter names to prevent collisions
+
         switch ($data['option']) {
             case 'exact':
                 $qb->setParameter($uid, $input);
@@ -67,14 +61,9 @@ class AdvancedNumberFilterType extends AbstractSimpleFilterType
             case 'notnull':
                 return "{$column} IS NOT NULL";
         }
-        throw new UnexpectedValueException("Unknown option '{$data['option']}'");
+        throw new \UnexpectedValueException("Unknown option '{$data['option']}'");
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     protected function isEmpty($data): bool
     {
         if (null === $data) {

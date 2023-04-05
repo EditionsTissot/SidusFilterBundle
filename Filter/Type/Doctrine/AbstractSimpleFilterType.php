@@ -35,6 +35,7 @@ abstract class AbstractSimpleFilterType extends AbstractDoctrineFilterType
         if (!$queryHandler instanceof DoctrineQueryHandlerInterface) {
             throw new BadQueryHandlerException($queryHandler, DoctrineQueryHandlerInterface::class);
         }
+
         if ($this->isEmpty($data)) {
             return;
         }
@@ -55,25 +56,14 @@ abstract class AbstractSimpleFilterType extends AbstractDoctrineFilterType
 
     /**
      * Must return the DQL statement and set the proper parameters in the QueryBuilder
-     *
-     * @param QueryBuilder $qb
-     * @param string       $column
-     * @param mixed        $data
-     *
-     * @return string
      */
     abstract protected function applyDQL(QueryBuilder $qb, string $column, $data): string;
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     protected function isEmpty($data): bool
     {
         return null === $data
             || (is_array($data) && 0 === count($data))
-            || ($data instanceof \Countable && $data->count() === 0);
+            || ($data instanceof \Countable && 0 === $data->count());
     }
 
     /**
@@ -83,12 +73,14 @@ abstract class AbstractSimpleFilterType extends AbstractDoctrineFilterType
     {
         if ($this->requiresCaseInsensitiveLikeTransform($qb, $operator)) {
             $function = $qb->getEntityManager()->getConfiguration()->getCustomStringFunction('ilike');
+
             if ($function) {
                 // Custom ilike function is supported, let's use it
-                if (strtoupper($operator) === 'LIKE') {
+                if ('LIKE' === strtoupper($operator)) {
                     return "ILIKE({$column}, :{$uid}) = TRUE";
                 }
-                if (strtoupper($operator) === 'NOT LIKE') {
+
+                if ('NOT LIKE' === strtoupper($operator)) {
                     return "ILIKE({$column}, :{$uid}) = FALSE";
                 }
             }
@@ -110,7 +102,7 @@ abstract class AbstractSimpleFilterType extends AbstractDoctrineFilterType
         }
         $platform = $qb->getEntityManager()->getConnection()->getDatabasePlatform();
 
-        if(!$platform instanceof AbstractPlatform) {
+        if (!$platform instanceof AbstractPlatform) {
             return false;
         }
 

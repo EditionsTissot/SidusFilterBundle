@@ -27,8 +27,6 @@ class SidusFilterBundle extends Bundle
 {
     /**
      * Adding compiler passes to inject services into configuration handlers
-     *
-     * @param ContainerBuilder $container
      */
     public function build(ContainerBuilder $container)
     {

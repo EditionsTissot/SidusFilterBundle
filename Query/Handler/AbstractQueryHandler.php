@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Sidus\FilterBundle\Query\Handler;
 
-use LogicException;
-use OutOfBoundsException;
 use Pagerfanta\Exception\InvalidArgumentException;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
@@ -30,7 +28,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
-use UnexpectedValueException;
 
 /**
  * Build the necessary logic around filters based on a configuration
@@ -58,10 +55,6 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     /** @var Pagerfanta */
     protected $pager;
 
-    /**
-     * @param FilterTypeRegistry                 $filterTypeRegistry
-     * @param QueryHandlerConfigurationInterface $configuration
-     */
     public function __construct(
         FilterTypeRegistry $filterTypeRegistry,
         QueryHandlerConfigurationInterface $configuration
@@ -69,29 +62,24 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
         $this->filterTypeRegistry = $filterTypeRegistry;
         $this->configuration = $configuration;
         $this->sortConfig = new SortConfig();
-        /** @noinspection LoopWhichDoesNotLoopInspection */
+        /* @noinspection LoopWhichDoesNotLoopInspection */
         foreach ($configuration->getDefaultSort() as $column => $direction) {
             $this->sortConfig = new SortConfig($column, 'desc' === strtolower($direction));
             break;
         }
     }
 
-    /**
-     * @return QueryHandlerConfigurationInterface
-     */
     public function getConfiguration(): QueryHandlerConfigurationInterface
     {
         return $this->configuration;
     }
 
     /**
-     * @param Request $request
-     *
-     * @throws LogicException
-     * @throws OutOfBoundsException
+     * @throws \LogicException
+     * @throws \OutOfBoundsException
      * @throws NotValidCurrentPageException
      * @throws BadQueryHandlerException
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function handleRequest(Request $request): void
     {
@@ -100,14 +88,12 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param array $data
-     *
-     * @throws LogicException
-     * @throws OutOfBoundsException
+     * @throws \LogicException
+     * @throws \OutOfBoundsException
      * @throws AlreadySubmittedException
      * @throws NotValidCurrentPageException
      * @throws BadQueryHandlerException
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function handleArray(array $data = []): void
     {
@@ -116,36 +102,25 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @throws LogicException
-     *
-     * @return FormInterface
+     * @throws \LogicException
      */
     public function getForm(): FormInterface
     {
         if (!$this->form) {
-            throw new LogicException(
-                'You must first build the form by calling buildForm($builder) with your form builder'
-            );
+            throw new \LogicException('You must first build the form by calling buildForm($builder) with your form builder');
         }
 
         return $this->form;
     }
 
-    /**
-     * @return SortConfig
-     */
     public function getSortConfig(): SortConfig
     {
         return $this->sortConfig;
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      * @throws BadQueryHandlerException
-     *
-     * @return FormInterface
      */
     public function buildForm(FormBuilderInterface $builder): FormInterface
     {
@@ -159,21 +134,16 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
 
     /**
      * @throws InvalidArgumentException
-     *
-     * @return Pagerfanta
      */
     public function getPager(): Pagerfanta
     {
         if (null === $this->pager) {
-            throw new LogicException('Handle filter form before getting pager');
+            throw new \LogicException('Handle filter form before getting pager');
         }
 
         return $this->pager;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
     protected function buildSortableForm(FormBuilderInterface $builder): void
     {
         $sortableBuilder = $builder->create(
@@ -190,6 +160,7 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
                 'data' => $this->getSortConfig(),
             ]
         );
+
         foreach ($this->getConfiguration()->getSortable() as $index => $sortable) {
             $sortableBuilder->add(
                 $index,
@@ -205,10 +176,8 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     /**
      * @todo : Put in form event ?
      *
-     * @throws LogicException
-     * @throws OutOfBoundsException
-     *
-     * @return SortConfig
+     * @throws \LogicException
+     * @throws \OutOfBoundsException
      */
     protected function applySortForm(): SortConfig
     {
@@ -222,6 +191,7 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
         foreach ($this->getConfiguration()->getSortable() as $index => $sortable) {
             /** @var SubmitButton $button */
             $button = $sortableForm->get((string) $index);
+
             if ($button->isClicked()) {
                 if ($sortConfig->getColumn() === $sortable) {
                     $sortConfig->switchDirection();
@@ -236,10 +206,8 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     *
      * @throws BadQueryHandlerException
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     protected function buildFilterForm(FormBuilderInterface $builder): void
     {
@@ -250,6 +218,7 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
                 'label' => false,
             ]
         );
+
         foreach ($this->getConfiguration()->getFilters() as $filter) {
             if ($filter->getOption('hidden', false)) {
                 continue;
@@ -265,6 +234,7 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
                 ],
                 $filterType->getFormOptions($this, $filter)
             );
+
             if ($filter->getLabel()) {
                 $formOptions['label'] = $filter->getLabel();
             }
@@ -280,10 +250,10 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     /**
      * @param int $selectedPage
      *
-     * @throws LogicException
-     * @throws OutOfBoundsException
+     * @throws \LogicException
+     * @throws \OutOfBoundsException
      * @throws BadQueryHandlerException
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     protected function handleForm($selectedPage = null): void
     {
@@ -293,15 +263,16 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @throws LogicException
-     * @throws OutOfBoundsException
-     * @throws UnexpectedValueException
+     * @throws \LogicException
+     * @throws \OutOfBoundsException
+     * @throws \UnexpectedValueException
      * @throws BadQueryHandlerException
      */
     protected function applyFilters(): void
     {
         $form = $this->getForm();
         $filterForm = $form->get(self::FILTERS_FORM_NAME);
+
         foreach ($this->getConfiguration()->getFilters() as $filter) {
             $filterType = $this->filterTypeRegistry->getFilterType(
                 $this->getConfiguration()->getProvider(),
@@ -330,11 +301,13 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
         if ($selectedPage) {
             $this->sortConfig->setPage((int) $selectedPage);
         }
+
         if (null !== $this->pager) {
-            throw new LogicException('Pager already applied');
+            throw new \LogicException('Pager already applied');
         }
         $this->pager = $this->createPager();
         $this->pager->setMaxPerPage($this->getConfiguration()->getResultsPerPage());
+
         try {
             $this->pager->setCurrentPage($this->sortConfig->getPage());
         } catch (NotValidCurrentPageException $e) {
@@ -342,13 +315,7 @@ abstract class AbstractQueryHandler implements QueryHandlerInterface
         }
     }
 
-    /**
-     * @param SortConfig $sortConfig
-     */
     abstract protected function applySort(SortConfig $sortConfig);
 
-    /**
-     * @return Pagerfanta
-     */
     abstract protected function createPager(): Pagerfanta;
 }

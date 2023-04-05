@@ -12,28 +12,25 @@ declare(strict_types=1);
 
 namespace Sidus\FilterBundle\Pagination;
 
-use ArrayIterator;
-use Countable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\Parser;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\CountWalker;
 use Doctrine\ORM\Tools\Pagination\LimitSubqueryOutputWalker;
 use Doctrine\ORM\Tools\Pagination\LimitSubqueryWalker;
 use Doctrine\ORM\Tools\Pagination\WhereInWalker;
-use IteratorAggregate;
 
 /**
  * Better paginator with simpler count query
  *
  * @author Madeline Veyrenc <mveyrenc@clever-age.com>
  */
-class DoctrineORMPaginator implements Countable, IteratorAggregate
+class DoctrineORMPaginator implements \Countable, \IteratorAggregate
 {
     /** @var Query */
     protected $query;
@@ -48,8 +45,8 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
     protected $count;
 
     /**
-     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
-     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     * @param Query|QueryBuilder $query               a Doctrine ORM query or query builder
+     * @param bool               $fetchJoinCollection whether the query joins a collection (true by default)
      */
     public function __construct($query, $fetchJoinCollection = true)
     {
@@ -74,7 +71,7 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
     /**
      * Returns whether the query joins a collection.
      *
-     * @return boolean Whether the query joins a collection.
+     * @return bool whether the query joins a collection
      */
     public function getFetchJoinCollection()
     {
@@ -147,7 +144,7 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
             $whereInQuery = $this->cloneQuery($this->query);
             // don't do this for an empty id array
             if (0 === count($ids)) {
-                return new ArrayIterator([]);
+                return new \ArrayIterator([]);
             }
 
             $this->appendTreeWalker($whereInQuery, WhereInWalker::class);
@@ -162,18 +159,19 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
                 ->setMaxResults($length)
                 ->setFirstResult($offset)
                 ->setCacheable($this->query->isCacheable())
-                ->getResult($this->query->getHydrationMode());
+                ->getResult($this->query->getHydrationMode())
+            ;
         }
 
-        return new ArrayIterator($result);
+        return new \ArrayIterator($result);
     }
 
     /**
      * Clones a query.
      *
-     * @param Query $query The query.
+     * @param Query $query the query
      *
-     * @return Query The cloned query.
+     * @return Query the cloned query
      */
     protected function cloneQuery(Query $query)
     {
@@ -193,7 +191,7 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
     /**
      * Determines whether to use an output walker for the query.
      *
-     * @param Query $query The query.
+     * @param Query $query the query
      *
      * @return bool
      */
@@ -209,7 +207,6 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
     /**
      * Appends a custom tree walker to the tree walkers hint.
      *
-     * @param Query  $query
      * @param string $walkerClass
      */
     protected function appendTreeWalker(Query $query, $walkerClass)
@@ -227,9 +224,9 @@ class DoctrineORMPaginator implements Countable, IteratorAggregate
     /**
      * Returns Query prepared to count.
      *
-     * @throws DBALException
-     *
      * @return Query
+     *
+     * @throws DBALException
      */
     protected function getCountQuery()
     {

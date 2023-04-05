@@ -25,17 +25,13 @@ abstract class AbstractDoctrineFilterType extends AbstractFilterType
 {
     /**
      * Returns an array of DQL references ready for filtering, handling nested entities through joins
-     *
-     * @param FilterInterface               $filter
-     * @param DoctrineQueryHandlerInterface $queryHandler
-     *
-     * @return array
      */
     public function getFullAttributeReferences(
         FilterInterface $filter,
         DoctrineQueryHandlerInterface $queryHandler
     ): array {
         $references = [];
+
         foreach ($filter->getAttributes() as $attributePath) {
             $references[] = $queryHandler->resolveAttributeAlias($attributePath);
         }
@@ -51,6 +47,7 @@ abstract class AbstractDoctrineFilterType extends AbstractFilterType
         DoctrineQueryHandlerInterface $queryHandler
     ): array {
         $metadata = [];
+
         foreach ($filter->getAttributes() as $attributePath) {
             $metadata[] = $queryHandler->getAttributeMetadata($attributePath);
         }
@@ -58,9 +55,6 @@ abstract class AbstractDoctrineFilterType extends AbstractFilterType
         return $metadata;
     }
 
-    /**
-     * @return string
-     */
     public function getProvider(): string
     {
         return 'doctrine';

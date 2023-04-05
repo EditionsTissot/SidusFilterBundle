@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Sidus\FilterBundle\Filter\Type\Doctrine;
 
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 use Sidus\FilterBundle\Exception\BadQueryHandlerException;
 use Sidus\FilterBundle\Filter\FilterInterface;
@@ -36,40 +34,43 @@ class DateRangeFilterType extends AbstractDoctrineFilterType
         if (!$queryHandler instanceof DoctrineQueryHandlerInterface) {
             throw new BadQueryHandlerException($queryHandler, DoctrineQueryHandlerInterface::class);
         }
+
         if (!is_array($data)) {
             return;
         }
 
         $startDate = $data[DateRangeType::START_NAME] ?? null;
         $endDate = $data[DateRangeType::END_NAME] ?? null;
+
         if (null === $startDate && null === $endDate) {
             return;
         }
 
         $qb = $queryHandler->getQueryBuilder();
         $columns = $this->getFullAttributeReferences($filter, $queryHandler);
-        if ($startDate instanceof DateTimeInterface) {
+
+        if ($startDate instanceof \DateTimeInterface) {
             $this->buildQb($columns, $qb, $startDate, '>=');
         }
-        if ($endDate instanceof DateTimeInterface) {
+
+        if ($endDate instanceof \DateTimeInterface) {
             $this->buildQb($columns, $qb, $endDate, '<=');
         }
     }
 
     /**
-     * @param array        $columns
-     * @param QueryBuilder $qb
-     * @param DateTime    $value
-     * @param string       $operator
+     * @param \DateTime $value
      */
-    protected function buildQb(array $columns, QueryBuilder $qb, DateTimeInterface $value, string $operator): void
+    protected function buildQb(array $columns, QueryBuilder $qb, \DateTimeInterface $value, string $operator): void
     {
         $dql = [];
+
         foreach ($columns as $column) {
             $uid = uniqid('date', false);
             $dql[] = "{$column} {$operator} :{$uid}";
             $qb->setParameter($uid, $value);
         }
+
         if (0 < count($dql)) {
             $qb->andWhere(implode(' OR ', $dql));
         }

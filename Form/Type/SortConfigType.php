@@ -40,21 +40,16 @@ class SortConfigType extends AbstractType
         $this->sortConfigClass = $sortConfigClass;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add(self::COLUMN_NAME, HiddenType::class)
             ->add(self::DIRECTION_NAME, HiddenType::class)
-            ->add(self::PAGE_NAME, HiddenType::class);
+            ->add(self::PAGE_NAME, HiddenType::class)
+        ;
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -66,7 +61,6 @@ class SortConfigType extends AbstractType
             ]
         );
     }
-
 
     /**
      * @return string

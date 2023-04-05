@@ -28,9 +28,6 @@ class DateRangeType extends AbstractType
     public const END_NAME = 'endDate';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     *
      * @throws InvalidArgumentException
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -55,7 +52,8 @@ class DateRangeType extends AbstractType
                         'placeholder' => 'sidus.filter.date_range.end_date',
                     ],
                 ]
-            );
+            )
+        ;
     }
 
     /**
