@@ -39,7 +39,7 @@
         "symfony/http-foundation": ">=3.0",
         "symfony/property-access": ">=3.0",
         "pagerfanta/pagerfanta": ">=2.7",
-        "sidus/base-bundle": "~1.0"
+        "sidus/base-bundle": "^2.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "Without Doctrine ORM, this bundle won't do anything out of the box"
